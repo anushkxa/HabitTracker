@@ -13,7 +13,7 @@ window.onload = function () {
     ];
 
     let title = document.getElementById("title");
-    title.innerText = months[currMonth];
+    title.innerText = "🌸"+months[currMonth]+"🌸";
 
     let habitTitle = document.getElementById("habitTitle");
     habitTitle.onclick = function () {
@@ -49,4 +49,73 @@ window.onload = function () {
         }
         rowCount++;
     }
+    let daysCompleted=0;
+    let completed = new Array(31);
+    for(let i=0;i<dayCount;i++){
+        let tempString=""+(i+1)+"-"+(currMonth+1)+"-"+currYear;
+        console.log(tempString);
+        let tempDay=localStorage.getItem(tempString);
+        console.log(tempDay);
+        if(tempDay==null || tempDay=="false"){
+            localStorage.setItem(tempString,'false');
+        }else if(tempDay=="true"){
+            daysCompleted++;
+        }
+        totalDays.innerHTML=daysCompleted+"/"+daysInTheMonth;
+
+    }
+
+    for(let i=0;i<currDate; i++){
+        let tempString=""+(i+1)+"-"+(currMonth+1)+"-"+currYear;
+
+        let chosenDay=localStorage.getItem(tempString);
+        console.log(i+1+":"+chosenDay);
+        let chosenDayDiv=document.getElementById("day"+(i+1));
+        if(chosenDay==="true"){
+            chosenDayDiv.style.color="pink";
+        }else if(chosenDay==="false"){
+            chosenDayDiv.style.color="black";
+        }
+    }
+
+    let dayDivs = document.querySelectorAll(".day");
+
+dayDivs.forEach((dayDiv) => {
+    dayDiv.onclick = function (e) {
+        let num = e.target.innerText;
+        if (!num) return;
+
+        let selectedDate = e.target;
+        let storageString = `${num}-${currMonth + 1}-${currYear}`;
+
+        if (localStorage.getItem(storageString) === "false") {
+            selectedDate.style.backgroundColor = "pink";
+            localStorage.setItem(storageString, "true");
+            daysCompleted++;
+        } else if (localStorage.getItem(storageString) === "true") {
+            selectedDate.style.backgroundColor = "white";
+            localStorage.setItem(storageString, "false");
+            daysCompleted--;
+        }
+
+        totalDays.innerHTML = `${daysCompleted}/${dayCount}`;
+
+        if (daysCompleted === currDate) {
+            alert("Great progress!");
+        }
+    };
+});
+
+let reset= document.getElementById("resetButton");
+reset.onclick = function(){
+    for(let i=0;i<dayCount;i++){
+        let tempString=""+(i+1)+"-"+(currMonth+1)+"-"+currYear;
+        localStorage.setItem(tempString,"false");
+        let currDay=document.getElementById("day"+(i+1));
+        currDay.style.backgroundColor="white";
+    }
+    daysCompleted=0;
+}
+
+
 };
